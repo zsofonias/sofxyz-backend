@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
-import { updatePortfolioDto } from './dtos/update-portfolio.dto';
+import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
 import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
 import { FindAllPortfoliosProvider } from './providers/find-all-portfolios/find-all-portfolios.provider';
 
@@ -50,7 +50,7 @@ export class PortfolioService {
 
   async findOneByIdAndUpdate(
     id: string,
-    updatePortfolioDto: updatePortfolioDto,
+    updatePortfolioDto: UpdatePortfolioDto,
   ) {
     await this.findOneByIdWithException(id);
     return this.prismaService.portfolio.update({

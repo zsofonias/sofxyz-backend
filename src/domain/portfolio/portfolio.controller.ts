@@ -12,10 +12,12 @@ import { PortfolioService } from './portfolio.service';
 
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
 import { FindByIdParamsDto } from 'src/common/dtos/find-by-id-params.dto';
-import { updatePortfolioDto } from './dtos/update-portfolio.dto';
+import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
 import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('portfolios')
+@ApiTags('Portfolio')
 export class PortfolioController {
   constructor(private readonly portfolioService: PortfolioService) {}
 
@@ -37,7 +39,7 @@ export class PortfolioController {
   @Patch(':id')
   async updatePortfolioById(
     @Param() { id }: FindByIdParamsDto,
-    @Body() updatePortfolioDto: updatePortfolioDto,
+    @Body() updatePortfolioDto: UpdatePortfolioDto,
   ) {
     return await this.portfolioService.findOneByIdAndUpdate(
       id,
