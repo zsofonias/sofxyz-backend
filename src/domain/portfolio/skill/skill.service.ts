@@ -4,14 +4,31 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateSkillDto } from './dtos/create-skill.dto';
 import { UpdateSkillDto } from './dtos/update-skill.dto';
+import { PortfolioService } from '../portfolio.service';
 
 @Injectable()
 export class SkillService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly portfolioService: PortfolioService,
+  ) {}
 
   async create(createSkillDto: CreateSkillDto) {
+    const { portfolioId, ...createSkillDtoData } = createSkillDto;
+
+    const createData: Prisma.SkillCreateInput = {
+      ...createSkillDtoData,
+    };
+
+    if (portfolioId) {
+      await this.portfolioService.findOneWithException({ id: portfolioId });
+      createData.portfolio = {
+        connect: { id: portfolioId },
+      };
+    }
+
     return this.prismaService.skill.create({
-      data: createSkillDto,
+      data: createData,
     });
   }
 

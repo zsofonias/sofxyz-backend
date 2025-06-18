@@ -1,10 +1,14 @@
-import { ApiPropertyOptional, PartialType } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
+import { ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { CreateSkillDto } from './create-skill.dto';
 
-export class UpdateSkillDto extends PartialType(CreateSkillDto) {
+export class UpdateSkillDto extends PartialType(
+  OmitType(CreateSkillDto, ['portfolioId']),
+) {
   @ApiPropertyOptional()
+  @IsUUID()
+  @IsString()
   @IsOptional()
   id?: string;
 }

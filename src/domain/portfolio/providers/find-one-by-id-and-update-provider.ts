@@ -5,6 +5,9 @@ import { PrismaService } from 'src/core/database/prisma.service';
 import { UpdatePortfolioDto } from '../dtos/update-portfolio.dto';
 import { CreateProjectDto } from '../project/dtos/creat-project.dto';
 import { CreateSkillDto } from '../skill/dtos/create-skill.dto';
+import { CreateExperienceDto } from '../experience/dtos/create-experience.dto';
+import { CreateEducationDto } from '../education/dtos/create-education.dto';
+
 import { diffById } from 'src/common/utils/diff-by-id.util';
 
 @Injectable()
@@ -15,7 +18,13 @@ export class FindOneByIdAndUpdateProvider {
     id: string,
     updatePortfolioDto: UpdatePortfolioDto,
   ) {
-    const { projects, skills, ...updatePortfolioData } = updatePortfolioDto;
+    const {
+      projects,
+      skills,
+      experiences,
+      educations,
+      ...updatePortfolioData
+    } = updatePortfolioDto;
 
     const portfolio = await this.prismaService.portfolio.findUnique({
       where: {
@@ -33,18 +42,22 @@ export class FindOneByIdAndUpdateProvider {
             id: true,
           },
         },
+        experiences: {
+          select: {
+            id: true,
+          },
+        },
+        educations: {
+          select: {
+            id: true,
+          },
+        },
       },
     });
 
     if (!portfolio) {
       throw new NotFoundException('Portfolio not found');
     }
-
-    const {
-      toCreate: projectsToCreate,
-      toUpdate: projectsToUpdate,
-      toDelete: projectsToDelete,
-    } = diffById(projects, portfolio.projects);
 
     // const projectsToCreate = (projects?.filter((p) => !p.id) ||
     //   []) as CreateProjectDto[];
@@ -55,18 +68,28 @@ export class FindOneByIdAndUpdateProvider {
     //   ) || [];
 
     const {
+      toCreate: projectsToCreate,
+      toUpdate: projectsToUpdate,
+      toDelete: projectsToDelete,
+    } = diffById(projects, portfolio.projects);
+
+    const {
       toCreate: skillsToCreate,
       toUpdate: skillsToUpdate,
       toDelete: skillsToDelete,
     } = diffById(skills, portfolio.skills);
 
-    // const skillsToCreate = (skills?.filter((s) => !s.id) ||
-    //   []) as CreateSkillDto[];
-    // const skillsToUpdate = skills?.filter((s) => s.id) || [];
-    // const skillsToDelete =
-    //   portfolio.skills?.filter(
-    //     (es) => !skillsToUpdate.some((us) => us.id === es.id),
-    //   ) || [];
+    const {
+      toCreate: experiencesToCreate,
+      toUpdate: experiencesToUpdate,
+      toDelete: experiencesToDelete,
+    } = diffById(experiences, portfolio.experiences);
+
+    const {
+      toCreate: educationsToCreate,
+      toUpdate: educationsToUpdate,
+      toDelete: educationsToDelete,
+    } = diffById(educations, portfolio.educations);
 
     const transactions: Prisma.PrismaPromise<any>[] = [];
 
@@ -115,25 +138,40 @@ export class FindOneByIdAndUpdateProvider {
             }),
             ...(skillsToDelete.length && { delete: skillsToDelete }),
           },
+          experiences: {
+            ...(experiencesToCreate.length && {
+              create: experiencesToCreate as CreateExperienceDto[],
+            }),
+            ...(experiencesToUpdate.length && {
+              update: experiencesToUpdate?.map((e) => ({
+                where: {
+                  id: e.id,
+                },
+                data: e,
+              })),
+            }),
+            ...(experiencesToDelete.length && { delete: experiencesToDelete }),
+          },
+          educations: {
+            ...(educationsToCreate.length && {
+              create: educationsToCreate as CreateEducationDto[],
+            }),
+            ...(educationsToUpdate.length && {
+              update: educationsToUpdate?.map((e) => ({
+                where: {
+                  id: e.id,
+                },
+                data: e,
+              })),
+            }),
+            ...(educationsToDelete.length && { delete: educationsToDelete }),
+          },
         },
         include: {
-          projects: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              image: true,
-              link: true,
-              repoUrl: true,
-            },
-          },
-          skills: {
-            select: {
-              name: true,
-              description: true,
-              level: true,
-            },
-          },
+          projects: true,
+          skills: true,
+          experiences: true,
+          educations: true,
         },
       }),
     );

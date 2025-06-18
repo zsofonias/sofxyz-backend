@@ -5,9 +5,16 @@ import { Type } from 'class-transformer';
 import { CreatePortfolioDto } from './create-portfolio.dto';
 import { UpdateProjectDto } from '../project/dtos/update-project.dto';
 import { UpdateSkillDto } from '../skill/dtos/update-skill.dto';
+import { UpdateExperienceDto } from '../experience/dtos/update-experience.dto';
+import { UpdateEducationDto } from '../education/dtos/update-education.dto';
 
 export class UpdatePortfolioDto extends PartialType(
-  OmitType(CreatePortfolioDto, ['projects', 'skills']),
+  OmitType(CreatePortfolioDto, [
+    'projects',
+    'skills',
+    'experiences',
+    'educations',
+  ]),
 ) {
   @ApiPropertyOptional({
     type: [UpdateProjectDto],
@@ -28,4 +35,24 @@ export class UpdatePortfolioDto extends PartialType(
   })
   @Type(() => UpdateSkillDto)
   skills?: UpdateSkillDto[];
+
+  @ApiPropertyOptional({
+    type: [UpdateExperienceDto],
+  })
+  @IsOptional()
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => UpdateExperienceDto)
+  experiences?: UpdateExperienceDto[];
+
+  @ApiPropertyOptional({
+    type: [UpdateEducationDto],
+  })
+  @IsOptional()
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => UpdateEducationDto)
+  educations?: UpdateEducationDto[];
 }

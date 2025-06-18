@@ -1,7 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsDateString,
+  IsOptional,
+  IsUUID,
+} from 'class-validator';
 
-export class CreateProjectDto {
+export class CreateEducationDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -10,22 +16,22 @@ export class CreateProjectDto {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
+  school?: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
   description?: string;
 
   @ApiPropertyOptional()
-  @IsString()
+  @IsDateString()
   @IsOptional()
-  image?: string;
+  startDate?: Date;
 
   @ApiPropertyOptional()
-  @IsString()
+  @IsDateString()
   @IsOptional()
-  link?: string;
-
-  @ApiPropertyOptional()
-  @IsString()
-  @IsOptional()
-  repoUrl?: string;
+  endDate?: Date;
 
   @ApiPropertyOptional()
   @IsUUID()

@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SkillLevel } from '@prisma/client';
 
@@ -20,4 +26,10 @@ export class CreateSkillDto {
   @IsEnum(SkillLevel)
   @IsOptional()
   level?: SkillLevel;
+
+  @ApiPropertyOptional()
+  @IsUUID()
+  @IsString()
+  @IsOptional()
+  portfolioId?: string;
 }

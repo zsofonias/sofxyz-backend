@@ -9,6 +9,8 @@ import {
 
 import { CreateProjectDto } from '../project/dtos/creat-project.dto';
 import { CreateSkillDto } from '../skill/dtos/create-skill.dto';
+import { CreateExperienceDto } from '../experience/dtos/create-experience.dto';
+import { CreateEducationDto } from '../education/dtos/create-education.dto';
 
 export class CreatePortfolioDto {
   @ApiProperty()
@@ -60,4 +62,24 @@ export class CreatePortfolioDto {
   })
   @Type(() => CreateSkillDto)
   skills?: CreateSkillDto[];
+
+  @ApiPropertyOptional({
+    type: [CreateExperienceDto],
+  })
+  @IsOptional()
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => CreateExperienceDto)
+  experiences?: CreateExperienceDto[];
+
+  @ApiPropertyOptional({
+    type: [CreateEducationDto],
+  })
+  @IsOptional()
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => CreateEducationDto)
+  educations?: CreateEducationDto[];
 }

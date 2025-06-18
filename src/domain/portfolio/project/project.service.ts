@@ -1,17 +1,46 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 
 import { PrismaService } from 'src/core/database/prisma.service';
 import { CreateProjectDto } from './dtos/creat-project.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
+import { PortfolioService } from '../portfolio.service';
 
 @Injectable()
 export class ProjectService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+
+    @Inject(forwardRef(() => PortfolioService))
+    private readonly portfolioService: PortfolioService,
+  ) {}
 
   async create(createProjectDto: CreateProjectDto) {
+    const { portfolioId, ...createProjectDtoData } = createProjectDto;
+
+    const createData: Prisma.ProjectCreateInput = {
+      ...createProjectDtoData,
+    };
+
+    if (portfolioId) {
+      await this.portfolioService.findOneWithException({
+        id: portfolioId,
+      });
+
+      createData.portfolio = {
+        connect: {
+          id: portfolioId,
+        },
+      };
+    }
+
     return await this.prismaService.project.create({
-      data: createProjectDto,
+      data: createData,
     });
   }
 

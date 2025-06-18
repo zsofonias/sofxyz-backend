@@ -7,6 +7,7 @@ import { FindOneByIdAndUpdateProvider } from './providers/find-one-by-id-and-upd
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
 import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
+import { PortfolioFindUniqueRestArgs } from './types/portfolio-find-unique-options.type';
 
 @Injectable()
 export class PortfolioService {
@@ -17,7 +18,13 @@ export class PortfolioService {
   ) {}
 
   async create(createPortfolioDto: CreatePortfolioDto) {
-    const { projects, skills, ...createPortfolioDtoData } = createPortfolioDto;
+    const {
+      projects,
+      skills,
+      experiences,
+      educations,
+      ...createPortfolioDtoData
+    } = createPortfolioDto;
     return this.prismaService.portfolio.create({
       data: {
         ...createPortfolioDtoData,
@@ -31,6 +38,16 @@ export class PortfolioService {
               create: skills,
             }
           : undefined,
+        experiences: experiences
+          ? {
+              create: experiences,
+            }
+          : undefined,
+        educations: educations
+          ? {
+              create: educations,
+            }
+          : undefined,
       },
     });
   }
@@ -41,27 +58,37 @@ export class PortfolioService {
 
   async findOne(
     filter: Prisma.PortfolioWhereUniqueInput,
-    select?: Prisma.PortfolioSelect,
+    args?: PortfolioFindUniqueRestArgs,
   ) {
     return await this.prismaService.portfolio.findUnique({
       where: filter,
-      select,
+      ...args,
     });
   }
 
   async findOneWithException(
     filter: Prisma.PortfolioWhereUniqueInput,
-    select?: Prisma.PortfolioSelect,
+    args?: PortfolioFindUniqueRestArgs,
   ) {
-    const portfolio = await this.findOne(filter, select);
+    const portfolio = await this.findOne(filter, args);
     if (!portfolio) {
       throw new NotFoundException('Portfolio not found');
     }
     return portfolio;
   }
 
-  async findOneById(id: string, select?: Prisma.PortfolioSelect) {
-    return this.findOneWithException({ id }, select);
+  async findOneById(id: string) {
+    return this.findOneWithException(
+      { id },
+      {
+        include: {
+          projects: true,
+          skills: true,
+          experiences: true,
+          educations: true,
+        },
+      },
+    );
   }
 
   async findOneByIdAndUpdate(
