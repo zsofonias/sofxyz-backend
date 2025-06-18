@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Portfolio, Prisma } from '@prisma/client';
 
 import { PaginationService } from 'src/common/pagination/pagination.service';
-import { QueryPortfolioDto } from '../../dtos/query-portfolio.dto';
+import { QueryPortfolioDto } from '../dtos/query-portfolio.dto';
 
 @Injectable()
 export class FindAllPortfoliosProvider {
@@ -49,6 +49,17 @@ export class FindAllPortfoliosProvider {
             id: true,
             title: true,
             description: true,
+            image: true,
+            link: true,
+            repoUrl: true,
+          },
+        },
+        skills: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            level: true,
           },
         },
       },

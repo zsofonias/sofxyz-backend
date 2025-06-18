@@ -1,25 +1,34 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+
 import { PrismaService } from 'src/core/database/prisma.service';
+import { FindAllPortfoliosProvider } from './providers/find-all-portfolios.provider';
+import { FindOneByIdAndUpdateProvider } from './providers/find-one-by-id-and-update-provider';
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
 import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
-import { FindAllPortfoliosProvider } from './providers/find-all-portfolios/find-all-portfolios.provider';
 
 @Injectable()
 export class PortfolioService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly findAllPortfoliosProvider: FindAllPortfoliosProvider,
+    private readonly findOneByIdAndUpdateProvider: FindOneByIdAndUpdateProvider,
   ) {}
 
   async create(createPortfolioDto: CreatePortfolioDto) {
+    const { projects, skills, ...createPortfolioDtoData } = createPortfolioDto;
     return this.prismaService.portfolio.create({
       data: {
-        ...createPortfolioDto,
-        projects: createPortfolioDto.projects
+        ...createPortfolioDtoData,
+        projects: projects
           ? {
-              create: createPortfolioDto.projects,
+              create: projects,
+            }
+          : undefined,
+        skills: skills
+          ? {
+              create: skills,
             }
           : undefined,
       },
@@ -30,37 +39,43 @@ export class PortfolioService {
     return this.findAllPortfoliosProvider.findAll(queryPortfolioDto);
   }
 
-  async findOne(filter: Prisma.PortfolioWhereUniqueInput) {
-    return this.prismaService.portfolio.findUnique({
+  async findOne(
+    filter: Prisma.PortfolioWhereUniqueInput,
+    select?: Prisma.PortfolioSelect,
+  ) {
+    return await this.prismaService.portfolio.findUnique({
       where: filter,
+      select,
     });
   }
 
-  async findOneWithException(filter: Prisma.PortfolioWhereUniqueInput) {
-    const portfolio = await this.findOne(filter);
+  async findOneWithException(
+    filter: Prisma.PortfolioWhereUniqueInput,
+    select?: Prisma.PortfolioSelect,
+  ) {
+    const portfolio = await this.findOne(filter, select);
     if (!portfolio) {
       throw new NotFoundException('Portfolio not found');
     }
     return portfolio;
   }
 
-  async findOneByIdWithException(id: string) {
-    return this.findOneWithException({ id });
+  async findOneById(id: string, select?: Prisma.PortfolioSelect) {
+    return this.findOneWithException({ id }, select);
   }
 
   async findOneByIdAndUpdate(
     id: string,
     updatePortfolioDto: UpdatePortfolioDto,
   ) {
-    await this.findOneByIdWithException(id);
-    return this.prismaService.portfolio.update({
-      where: { id },
-      data: updatePortfolioDto,
-    });
+    return this.findOneByIdAndUpdateProvider.findOneByIdAndUpdate(
+      id,
+      updatePortfolioDto,
+    );
   }
 
   async findOneByIdAndDelete(id: string) {
-    await this.findOneByIdWithException(id);
+    await this.findOneWithException({ id });
     return this.prismaService.portfolio.delete({
       where: { id },
     });

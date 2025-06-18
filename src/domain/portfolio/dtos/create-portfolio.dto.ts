@@ -1,5 +1,14 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+
+import { CreateProjectDto } from '../project/dtos/creat-project.dto';
+import { CreateSkillDto } from '../skill/dtos/create-skill.dto';
 
 export class CreatePortfolioDto {
   @ApiProperty()
@@ -32,7 +41,23 @@ export class CreatePortfolioDto {
   @IsOptional()
   githubUrl: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: [CreateProjectDto],
+  })
   @IsOptional()
-  projects?: any;
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => CreateProjectDto)
+  projects?: CreateProjectDto[];
+
+  @ApiPropertyOptional({
+    type: [CreateSkillDto],
+  })
+  @IsOptional()
+  @ValidateNested({
+    each: true,
+  })
+  @Type(() => CreateSkillDto)
+  skills?: CreateSkillDto[];
 }
