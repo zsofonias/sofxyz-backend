@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -46,40 +47,44 @@ export class CreatePortfolioDto {
   @ApiPropertyOptional({
     type: [CreateProjectDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => CreateProjectDto)
   projects?: CreateProjectDto[];
 
   @ApiPropertyOptional({
     type: [CreateSkillDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => CreateSkillDto)
   skills?: CreateSkillDto[];
 
   @ApiPropertyOptional({
     type: [CreateExperienceDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => CreateExperienceDto)
   experiences?: CreateExperienceDto[];
 
   @ApiPropertyOptional({
     type: [CreateEducationDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => CreateEducationDto)
   educations?: CreateEducationDto[];
 }

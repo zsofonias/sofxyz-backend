@@ -2,39 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { Portfolio, Prisma } from '@prisma/client';
 
 import { PaginationService } from 'src/common/pagination/pagination.service';
-import { QueryPortfolioDto } from '../dtos/query-portfolio.dto';
+import { QueryPortfoliosDto } from '../dtos/query-portfolios.dto';
 
 @Injectable()
 export class FindAllPortfoliosProvider {
   constructor(private readonly paginationService: PaginationService) {}
 
-  async findAll(queryPortfolioDto: QueryPortfolioDto) {
+  async findAll(queryPortfoliosDto: QueryPortfoliosDto) {
     const where: Prisma.PortfolioWhereInput = {};
 
-    if (queryPortfolioDto.title) {
+    const { title, userEmail, username } = queryPortfoliosDto;
+
+    if (title) {
       where.title = {
-        contains: queryPortfolioDto.title,
+        contains: title,
         mode: 'insensitive',
       };
     }
 
-    if (queryPortfolioDto.userEmail) {
+    if (userEmail) {
       where.user = {
-        email: queryPortfolioDto.userEmail,
+        email: userEmail,
       };
     }
 
-    if (queryPortfolioDto.username) {
+    if (username) {
       where.user = {
         OR: [
           {
             firstname: {
-              contains: queryPortfolioDto.username,
+              contains: username,
             },
           },
           {
             lastname: {
-              contains: queryPortfolioDto.username,
+              contains: username,
             },
           },
         ],
@@ -54,7 +56,7 @@ export class FindAllPortfoliosProvider {
     return this.paginationService.paginateQuery<Portfolio>(
       'portfolio',
       query,
-      queryPortfolioDto,
+      queryPortfoliosDto,
     );
 
     // return this.prismaService.portfolio.findMany({

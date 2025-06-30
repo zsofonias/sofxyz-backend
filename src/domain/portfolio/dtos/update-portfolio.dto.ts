@@ -1,5 +1,5 @@
 import { ApiPropertyOptional, OmitType, PartialType } from '@nestjs/swagger';
-import { IsOptional, ValidateNested } from 'class-validator';
+import { IsArray, IsOptional, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { CreatePortfolioDto } from './create-portfolio.dto';
@@ -19,40 +19,44 @@ export class UpdatePortfolioDto extends PartialType(
   @ApiPropertyOptional({
     type: [UpdateProjectDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => UpdateProjectDto)
   projects?: UpdateProjectDto[];
 
   @ApiPropertyOptional({
     type: [UpdateSkillDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => UpdateSkillDto)
   skills?: UpdateSkillDto[];
 
   @ApiPropertyOptional({
     type: [UpdateExperienceDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => UpdateExperienceDto)
   experiences?: UpdateExperienceDto[];
 
   @ApiPropertyOptional({
     type: [UpdateEducationDto],
   })
-  @IsOptional()
+  @IsArray()
   @ValidateNested({
     each: true,
   })
+  @IsOptional()
   @Type(() => UpdateEducationDto)
   educations?: UpdateEducationDto[];
 }

@@ -2,7 +2,7 @@ import { IntersectionType } from '@nestjs/swagger';
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { PaginationDto } from 'src/common/pagination/dtos/pagination.dto';
 
-class QueryPortfolioBaseDto {
+class QueryPortfoliosBaseDto {
   @IsString()
   @IsOptional()
   title?: string;
@@ -17,7 +17,7 @@ class QueryPortfolioBaseDto {
   username?: string;
 }
 
-export class QueryPortfolioDto extends IntersectionType(
-  QueryPortfolioBaseDto,
+export class QueryPortfoliosDto extends IntersectionType(
+  QueryPortfoliosBaseDto,
   PaginationDto,
 ) {}

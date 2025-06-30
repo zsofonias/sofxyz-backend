@@ -16,7 +16,7 @@ import { PortfolioService } from './portfolio.service';
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
 import { FindByIdParamsDto } from 'src/common/dtos/find-by-id-params.dto';
 import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
-import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
+import { QueryPortfoliosDto } from './dtos/query-portfolios.dto';
 
 @Controller('portfolios')
 @ApiTags('Portfolio')
@@ -31,8 +31,8 @@ export class PortfolioController {
 
   @ApiOperation({ summary: 'Get all portfolios' })
   @Get()
-  async getAllPortfolio(@Query() queryPortfolioDto: QueryPortfolioDto) {
-    return await this.portfolioService.findAll(queryPortfolioDto);
+  async getAllPortfolio(@Query() queryPortfoliosDto: QueryPortfoliosDto) {
+    return await this.portfolioService.findAll(queryPortfoliosDto);
   }
 
   @ApiOperation({ summary: 'Get a portfolio by id' })

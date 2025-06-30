@@ -6,7 +6,7 @@ import { FindAllPortfoliosProvider } from './providers/find-all-portfolios.provi
 import { FindOneByIdAndUpdateProvider } from './providers/find-one-by-id-and-update-provider';
 import { CreatePortfolioDto } from './dtos/create-portfolio.dto';
 import { UpdatePortfolioDto } from './dtos/update-portfolio.dto';
-import { QueryPortfolioDto } from './dtos/query-portfolio.dto';
+import { QueryPortfoliosDto } from './dtos/query-portfolios.dto';
 import { PortfolioFindUniqueRestArgs } from './types/portfolio-find-unique-options.type';
 
 @Injectable()
@@ -52,8 +52,8 @@ export class PortfolioService {
     });
   }
 
-  async findAll(queryPortfolioDto: QueryPortfolioDto) {
-    return this.findAllPortfoliosProvider.findAll(queryPortfolioDto);
+  async findAll(queryPortfoliosDto: QueryPortfoliosDto) {
+    return this.findAllPortfoliosProvider.findAll(queryPortfoliosDto);
   }
 
   async findOne(
